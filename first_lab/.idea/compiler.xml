@@ -11,6 +11,6 @@
         <module name="client-f" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="6" />
+    <bytecodeTargetLevel target="7" />
   </component>
 </project>
