@@ -1,4 +1,18 @@
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+
 public class ClientGx {
+    private static final int port = 2020;
+
+    private static final int BUFFER_SIZE = 1024;
+
+    private static SocketChannel socket;
+
+    private static ClientGx instance;
+
     public static int fx (int variant) throws InterruptedException {
         Thread.sleep(5);
         switch (variant){
@@ -17,7 +31,7 @@ public class ClientGx {
                 throw new IllegalArgumentException("Error!");
         }
     }
-    public static void main(String[] args) throws InterruptedException {
+    private ClientGx (){
 
 
     }
