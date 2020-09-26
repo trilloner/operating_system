@@ -32,6 +32,49 @@ public class ClientGx {
         }
     }
     private ClientGx (){
+        try {
+            InetSocketAddress address = new InetSocketAddress("localhost", port);
+             socket = SocketChannel.open(address);
+            System.out.println("Trying to connect to");
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    public static void start(){
+        try{
+            System.out.println("Trying to connect ");
+            String msg = "Hello its me";
+
+            ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
+//            buffer.put(msg.getBytes());
+//            buffer.flip();
+//
+//            int bytesWritten = socket.write(buffer);
+//            buffer.clear();
+//            System.out.println("Bytes in your message: " + bytesWritten);
+
+            int readLenth = socket.read(buffer);
+
+            buffer.flip();
+            byte[] bytes = new byte[readLenth];
+            buffer.get(bytes);
+            System.out.println(new String(bytes, "UTF-8"));
+            buffer.clear();
+
+
+
+        }catch (IOException e){
+            System.out.println("No connect");
+            e.printStackTrace();
+        }
+    }
+    public static void main(String[] args) {
+        new ClientGx("localhost");
+
+        System.out.println("Client started");
+
+
 
 
     }
