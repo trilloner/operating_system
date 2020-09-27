@@ -25,14 +25,16 @@ public class ClientFx extends Thread {
         Thread.sleep(5);
         switch (variant) {
             case 1:
-                return (int) (2 + Math.random() * 10);
+                return (int) (10);
             case 2:
-                Thread.sleep(5);
+                Thread.sleep(500);
                 return (int) (2 + Math.random() * 10);
             case 3:
                 return 0;
             case 4:
             case 6:
+                Thread.sleep(5000);
+
                 JFrame jf = new JFrame();
                 jf.setSize(500,200);
                 jf.addKeyListener(new ClientGx.KeyHandler());

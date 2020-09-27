@@ -30,6 +30,8 @@ public class ClientGx extends Thread{
                 return (int) (2 + Math.random() * 10);
             case 3:
             case 5:
+                Thread.sleep(5000);
+
                 JFrame jf = new JFrame();
                 jf.setSize(500,200);
                 jf.addKeyListener(new KeyHandler());
