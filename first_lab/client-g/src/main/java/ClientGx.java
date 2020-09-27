@@ -4,14 +4,13 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-public class ClientGx {
+public class ClientGx extends Thread{
     private static final int port = 2020;
 
     private static final int BUFFER_SIZE = 1024;
 
     private static SocketChannel socket;
 
-    private static ClientGx instance;
 
 
     private static int fx(int variant) throws InterruptedException {
@@ -37,13 +36,12 @@ public class ClientGx {
         try {
             InetSocketAddress address = new InetSocketAddress("localhost", port);
             socket = SocketChannel.open(address);
-            System.out.println("Trying to connect to");
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
+    @Override
     public void run() {
         try {
             System.out.println("Trying to connect ");
@@ -71,12 +69,6 @@ public class ClientGx {
         }
     }
 
-    public static ClientGx start() {
-        if (instance == null)
-            instance = new ClientGx();
-
-        return instance;
-    }
 
     private void sendMessage(int answer) {
         try {
@@ -94,8 +86,9 @@ public class ClientGx {
     }
 
     public static void main(String[] args) {
-        ClientGx client = new ClientGx();
-        client.run();
+        new ClientGx().start();
+
+
 
         System.out.println("Client started");
 
