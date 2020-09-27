@@ -1,8 +1,17 @@
+/**
+ * Operating system. Lab1. Variant 6
+ *
+ * @author Bogdan Volokhonenko
+ */
+
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.concurrent.ConcurrentLinkedQueue;
+
 
 public class ClientFx extends Thread {
 
@@ -24,12 +33,17 @@ public class ClientFx extends Thread {
                 return 0;
             case 4:
             case 6:
-                Thread.sleep(1000);
-                System.out.println("Something went wrong...");
-                Thread.sleep(1000);
-                System.out.println("Error!");
-
-                while(true){
+                JFrame jf = new JFrame();
+                jf.setSize(500,200);
+                jf.addKeyListener(new ClientGx.KeyHandler());
+                jf.add(new JLabel("SOMETHING WENT WRONG. \n ERROR. PRESS ENTER", SwingUtilities.CENTER));
+                jf.setVisible(true);
+                jf.setLocationRelativeTo(null);
+                while (true) {
+                    Thread.sleep(1000);
+                    System.out.println("Something went wrong...");
+                    Thread.sleep(1000);
+                    System.out.println("Error!");
                 }
             case 5:
                 return (int) (2 + Math.random() * 10);
@@ -90,5 +104,27 @@ public class ClientFx extends Thread {
         }
 
     }
+    public static class KeyHandler implements KeyListener {
 
+        @Override
+        public void keyTyped(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER){
+
+
+            }
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+                System.exit(1);
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
+        }
+    }
 }
