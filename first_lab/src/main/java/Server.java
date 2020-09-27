@@ -11,9 +11,12 @@ import java.util.List;
 public class Server {
     private Selector selector; //multiplexer
     private InetSocketAddress address;//address
+    private final int  variant;
+    private List<Integer> 
 
-    public Server(String host, int port) {
+    public Server(String host, int port , int variant) {
         this.address = new InetSocketAddress(host, port);
+        this.variant = variant;
     }
 
     public void run() {
