@@ -5,18 +5,21 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class Server {
     private Selector selector; //multiplexer
     private InetSocketAddress address;//address
-    private final int  variant;
-    private List<Integer> 
+    private final int variant;
+    private boolean calculateEnable = true;
+    private int maxConnections;
+    private final HashMap<Integer,String> results = new HashMap<>();
+    private ArrayList<Thread> clientThreads = new ArrayList<>();
 
-    public Server(String host, int port , int variant) {
+    public Server(String host, int port, int variant, int maxConnections) {
         this.address = new InetSocketAddress(host, port);
         this.variant = variant;
+        this.maxConnections = maxConnections;
     }
 
     public void run() {
@@ -27,11 +30,15 @@ public class Server {
             serverSocketChannel.configureBlocking(false); // non blocking
             serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT); // register selector and type of event
 
-            new ClientGx().start();
-            new ClientFx().start();
+            ClientGx gx = new ClientGx();
+            ClientFx fx = new ClientFx();
+            gx.start();
+            fx.start();
+            clientThreads.add(gx);
+            clientThreads.add(fx);
             System.out.println("Server started!");
 
-            while (true) {
+            while (calculateEnable) {
                 //blocking wait for events
                 this.selector.select();
                 Iterator keys = this.selector.selectedKeys().iterator();
@@ -41,7 +48,10 @@ public class Server {
                     if (!key.isValid()) continue;
                     if (key.isAcceptable()) accept(key);
                     else if (key.isReadable()) read(key);
-                    //else if (key.isWritable()) write(key);
+                }
+
+                if (this.maxConnections <= 0) {
+                    this.calculateEnable = false;
                 }
 
             }
@@ -50,10 +60,7 @@ public class Server {
         }
     }
 
-    private void write(SelectionKey key) {
-        String s = "Connect to the server";
-        broadcast(s, key);
-    }
+
 
     private void accept(SelectionKey key) throws IOException {
         ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
@@ -82,9 +89,11 @@ public class Server {
         byte[] data = new byte[numRead];
         System.arraycopy(byteBuffer.array(), 0, data, 0, numRead);
         String gotData = new String(data);
-        System.out.println("Got: " + gotData);
-
+        System.out.println("Got:" + gotData);
+        analyzeResult(gotData);
         channel.register(this.selector, SelectionKey.OP_WRITE);
+    }
+
 
 
     }
@@ -98,8 +107,8 @@ public class Server {
             SocketChannel channel = (SocketChannel) key.channel();
             channel.write(byteBuffer);
 
+    }
 
-        } catch (IOException e) {
             e.printStackTrace();
         }
     }
