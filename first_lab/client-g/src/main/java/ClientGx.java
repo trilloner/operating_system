@@ -1,5 +1,12 @@
+/**
+ * Operating system. Lab1. Variant 6
+ *
+ * @author Bogdan Volokhonenko
+ */
+import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -10,7 +17,6 @@ public class ClientGx extends Thread{
     private static final int BUFFER_SIZE = 1024;
 
     private static SocketChannel socket;
-
 
 
     private static int fx(int variant) throws InterruptedException {
@@ -24,13 +30,17 @@ public class ClientGx extends Thread{
                 return (int) (2 + Math.random() * 10);
             case 3:
             case 5:
-                Thread.sleep(1000);
-                System.out.println("Something went wrong...");
-                Thread.sleep(1000);
-                System.out.println("Error!");
-
-                while(true){
-
+                JFrame jf = new JFrame();
+                jf.setSize(500,200);
+                jf.addKeyListener(new KeyHandler());
+                jf.add(new JLabel("SOMETHING WENT WRONG. \n ERROR. PRESS ENTER", SwingUtilities.CENTER));
+                jf.setVisible(true);
+                jf.setLocationRelativeTo(null);
+                while (true) {
+                    Thread.sleep(1000);
+                    System.out.println("Something went wrong...");
+                    Thread.sleep(1000);
+                    System.out.println("Error!");
                 }
             case 4:
                 return 0;
@@ -51,7 +61,6 @@ public class ClientGx extends Thread{
     @Override
     public void run() {
         try {
-            System.out.println("Trying to connect ");
             String msg = "Hello its me";
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
@@ -61,12 +70,13 @@ public class ClientGx extends Thread{
             byte[] bytes = new byte[readLenth];
             buffer.get(bytes);
             String result = new String(bytes, "UTF-8");
-            System.out.println(result);
+
             buffer.clear();
 
             int number = Integer.parseInt(result);
 
             int message = fx(number);
+
             this.sendMessage(message);
 
 
@@ -75,7 +85,6 @@ public class ClientGx extends Thread{
             e.printStackTrace();
         }
     }
-
 
     private void sendMessage(int answer) {
         try {
@@ -92,4 +101,27 @@ public class ClientGx extends Thread{
 
     }
 
+    public static class KeyHandler implements KeyListener{
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER){
+
+
+            }
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+               System.exit(1);
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
+        }
+    }
 }
