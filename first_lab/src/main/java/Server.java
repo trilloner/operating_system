@@ -94,7 +94,20 @@ public class Server {
         channel.register(this.selector, SelectionKey.OP_WRITE);
     }
 
+    private void analyzeResult(String result){
+        String [] args = result.split(" ");
+        if (args.length < 2)
+            return;
+        int value =  Integer.parseInt(args[0]);
 
+        if (value == 0){
+            this.calculateEnable = false;
+        }
+
+        String name = args[1];
+
+        this.results.put(value,name);
+        maxConnections--;
 
     }
 
