@@ -1,3 +1,9 @@
+/**
+ * Operating system. Lab1. Variant 6
+ *
+ * @author Bogdan Volokhonenko
+ */
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -7,21 +13,35 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.*;
 
+/**
+ * Non blocking Server class
+ */
 public class Server {
     private Selector selector; //multiplexer
     private InetSocketAddress address;//address
     private final int variant;
     private boolean calculateEnable = true;
     private int maxConnections;
-    private final HashMap<Integer,String> results = new HashMap<>();
+    private final HashMap<Integer, String> results = new HashMap<>();
     private ArrayList<Thread> clientThreads = new ArrayList<>();
 
+    /**
+     * Constructor
+     *
+     * @param host
+     * @param port
+     * @param variant
+     * @param maxConnections
+     */
     public Server(String host, int port, int variant, int maxConnections) {
         this.address = new InetSocketAddress(host, port);
         this.variant = variant;
         this.maxConnections = maxConnections;
     }
 
+    /**
+     * Function that running server
+     */
     public void run() {
         try {
             this.selector = Selector.open(); // init selector
@@ -55,13 +75,18 @@ public class Server {
                 }
 
             }
+            serverSocketChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-
+    /**
+     * Function that accepting connections
+     *
+     * @param key
+     * @throws IOException
+     */
     private void accept(SelectionKey key) throws IOException {
         ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
         SocketChannel channel = serverSocketChannel.accept(); // getting channel
@@ -76,6 +101,12 @@ public class Server {
         channel.register(this.selector, SelectionKey.OP_READ);
     }
 
+    /**
+     * Function that reading message from client
+     *
+     * @param key
+     * @throws IOException
+     */
     private void read(SelectionKey key) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
@@ -94,19 +125,24 @@ public class Server {
         channel.register(this.selector, SelectionKey.OP_WRITE);
     }
 
-    private void analyzeResult(String result){
-        String [] args = result.split(" ");
+    /**
+     * Function that analyzing result from client
+     *
+     * @param result
+     */
+    private void analyzeResult(String result) {
+        String[] args = result.split(" ");
         if (args.length < 2)
             return;
-        int value =  Integer.parseInt(args[0]);
+        int value = Integer.parseInt(args[0]);
 
-        if (value == 0){
+        if (value == 0) {
             this.calculateEnable = false;
         }
 
         String name = args[1];
 
-        this.results.put(value,name);
+        this.results.put(value, name);
         maxConnections--;
 
     }
@@ -115,28 +151,34 @@ public class Server {
         return results;
     }
 
-    public int getMultiplication(){
-        int result =1;
+    /**
+     * Function that calculate result
+     *
+     * @return
+     */
+    public int getMultiplication() {
+        int result = 1;
         Set<Integer> keys = this.results.keySet();
-        for (int s: keys){
-            if (s==0) return 0;
-            else result=s*result;
+        for (int s : keys) {
+            if (s == 0) return 0;
+            else result = s * result;
         }
         return result;
 
     }
 
-    public void close(){
-        try{
+    /**
+     * Function that closing server
+     */
+    public void close() {
+        try {
             this.selector.close();
-            for (Thread thread: clientThreads){
+            for (Thread thread : clientThreads) {
                 thread.stop();
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
 }
-
