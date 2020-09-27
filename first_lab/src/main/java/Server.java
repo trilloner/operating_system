@@ -111,20 +111,32 @@ public class Server {
 
     }
 
+    public HashMap<Integer, String> getResults() {
+        return results;
+    }
 
-    private void broadcast(String data, SelectionKey key) {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-        byteBuffer.put(data.getBytes());
-        byteBuffer.flip();
-        try {
-            SocketChannel channel = (SocketChannel) key.channel();
-            channel.write(byteBuffer);
+    public int getMultiplication(){
+        int result =1;
+        Set<Integer> keys = this.results.keySet();
+        for (int s: keys){
+            if (s==0) return 0;
+            else result=s*result;
+        }
+        return result;
 
     }
 
+    public void close(){
+        try{
+            this.selector.close();
+            for (Thread thread: clientThreads){
+                thread.stop();
+            }
+        }catch (IOException e){
             e.printStackTrace();
         }
     }
+
 
 }
 
