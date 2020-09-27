@@ -25,6 +25,12 @@ public class ClientFx extends Thread {
             case 4:
             case 6:
                 Thread.sleep(1000);
+                System.out.println("Something went wrong...");
+                Thread.sleep(1000);
+                System.out.println("Error!");
+
+                while(true){
+                }
             case 5:
                 return (int) (2 + Math.random() * 10);
             default:
@@ -46,7 +52,6 @@ public class ClientFx extends Thread {
     @Override
     public void run() {
         try {
-            System.out.println("Trying to connect ");
             String msg = "Hello its me";
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
@@ -56,7 +61,6 @@ public class ClientFx extends Thread {
             byte[] bytes = new byte[readLenth];
             buffer.get(bytes);
             String result = new String(bytes, "UTF-8");
-            System.out.println(result);
             buffer.clear();
 
             int number = Integer.parseInt(result);
@@ -75,7 +79,7 @@ public class ClientFx extends Thread {
     private void sendMessage(int answer) {
         try {
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-            String str = String.valueOf(answer);
+            String str = String.valueOf(answer) +  " f(x)";
             buffer.put(str.getBytes());
             buffer.flip();
             socket.write(buffer);
@@ -87,8 +91,4 @@ public class ClientFx extends Thread {
 
     }
 
-    public static void main(String[] args) throws InterruptedException {
-
-        new ClientFx().start();
-    }
 }

@@ -18,13 +18,20 @@ public class ClientGx extends Thread{
         switch (variant) {
             case 1:
                 Thread.sleep(500);
-                return (int) (2 + Math.random() * 10);
+                return (int) (100);
             case 2:
             case 6:
                 return (int) (2 + Math.random() * 10);
             case 3:
             case 5:
-                Thread.sleep(5);
+                Thread.sleep(1000);
+                System.out.println("Something went wrong...");
+                Thread.sleep(1000);
+                System.out.println("Error!");
+
+                while(true){
+
+                }
             case 4:
                 return 0;
             default:
@@ -73,7 +80,7 @@ public class ClientGx extends Thread{
     private void sendMessage(int answer) {
         try {
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
-            String str = String.valueOf(answer);
+            String str = String.valueOf(answer) + " g(x)";
             buffer.put(str.getBytes());
             buffer.flip();
             socket.write(buffer);
@@ -85,13 +92,4 @@ public class ClientGx extends Thread{
 
     }
 
-    public static void main(String[] args) {
-        new ClientGx().start();
-
-
-
-        System.out.println("Client started");
-
-
-    }
 }
