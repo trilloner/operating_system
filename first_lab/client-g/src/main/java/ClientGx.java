@@ -11,6 +11,9 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
+/**
+ * Client class
+ */
 public class ClientGx extends Thread{
     private static final int port = 2020;
 
@@ -18,7 +21,13 @@ public class ClientGx extends Thread{
 
     private static SocketChannel socket;
 
-
+    /**
+     * Function f(x) that does complex calculations
+     *
+     * @param variant
+     * @return
+     * @throws InterruptedException
+     */
     private static int fx(int variant) throws InterruptedException {
         Thread.sleep(5);
         switch (variant) {
@@ -27,7 +36,7 @@ public class ClientGx extends Thread{
                 return (int) (100);
             case 2:
             case 6:
-                return (int) (2 + Math.random() * 10);
+                return (int) (variant * 10);
             case 3:
             case 5:
                 Thread.sleep(5000);
@@ -51,6 +60,9 @@ public class ClientGx extends Thread{
         }
     }
 
+    /**
+     * Constructor
+     */
     public ClientGx() {
         try {
             InetSocketAddress address = new InetSocketAddress("localhost", port);
@@ -60,10 +72,14 @@ public class ClientGx extends Thread{
             e.printStackTrace();
         }
     }
+
+    /**
+     * An override method that starts and connects the client to the server
+     */
     @Override
     public void run() {
         try {
-            String msg = "Hello its me";
+
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
             int readLenth = socket.read(buffer);
@@ -88,6 +104,10 @@ public class ClientGx extends Thread{
         }
     }
 
+    /**
+     * Function that send message to the server
+     * @param answer
+     */
     private void sendMessage(int answer) {
         try {
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
@@ -103,15 +123,13 @@ public class ClientGx extends Thread{
 
     }
 
+    /**
+     * Class cancellation
+     */
     public static class KeyHandler implements KeyListener{
 
         @Override
-        public void keyTyped(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_ENTER){
-
-
-            }
-        }
+        public void keyTyped(KeyEvent e) { }
 
         @Override
         public void keyPressed(KeyEvent e) {
@@ -120,10 +138,7 @@ public class ClientGx extends Thread{
                System.exit(1);
             }
         }
-
         @Override
-        public void keyReleased(KeyEvent e) {
-
-        }
+        public void keyReleased(KeyEvent e) { }
     }
 }

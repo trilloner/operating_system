@@ -12,7 +12,9 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
-
+/**
+ * Client class
+ */
 public class ClientFx extends Thread {
 
     private static final int port = 2020;
@@ -20,7 +22,13 @@ public class ClientFx extends Thread {
     private static final int BUFFER_SIZE = 1024;
 
     private static SocketChannel socket;
-
+    /**
+     * Function f(x) that does complex calculations
+     *
+     * @param variant
+     * @return
+     * @throws InterruptedException
+     */
     public static int fx(int variant) throws InterruptedException {
         Thread.sleep(5);
         switch (variant) {
@@ -28,7 +36,7 @@ public class ClientFx extends Thread {
                 return (int) (10);
             case 2:
                 Thread.sleep(500);
-                return (int) (2 + Math.random() * 10);
+                return (int) (variant * 5);
             case 3:
                 return 0;
             case 4:
@@ -54,7 +62,9 @@ public class ClientFx extends Thread {
         }
     }
 
-
+    /**
+     * Constructor
+     */
     public ClientFx() {
         try {
             InetSocketAddress address = new InetSocketAddress("localhost", port);
@@ -65,10 +75,13 @@ public class ClientFx extends Thread {
         }
     }
 
+    /**
+     * An override method that starts and connects the client to the server
+     */
     @Override
     public void run() {
         try {
-            String msg = "Hello its me";
+
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
 
             int readLenth = socket.read(buffer);
@@ -91,7 +104,10 @@ public class ClientFx extends Thread {
         }
     }
 
-
+    /**
+     * Function that send message to the server
+     * @param answer
+     */
     private void sendMessage(int answer) {
         try {
             ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
@@ -106,27 +122,22 @@ public class ClientFx extends Thread {
         }
 
     }
+    /**
+     * Class cancellation
+     */
     public static class KeyHandler implements KeyListener {
 
         @Override
-        public void keyTyped(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_ENTER){
-
-
-            }
-        }
+        public void keyTyped(KeyEvent e) { }
 
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-
                 System.exit(1);
             }
         }
 
         @Override
-        public void keyReleased(KeyEvent e) {
-
-        }
+        public void keyReleased(KeyEvent e) { }
     }
 }
