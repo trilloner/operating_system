@@ -1,5 +1,5 @@
 /**
- * Operating system. Lab1. Variant 6
+ * Operating system. Lab1. Variant 5
  *
  * @author Bogdan Volokhonenko
  */
