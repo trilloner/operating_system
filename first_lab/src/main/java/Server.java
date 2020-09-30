@@ -4,11 +4,11 @@
  * @author Bogdan Volokhonenko
  */
 
+import sun.rmi.runtime.Log;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.*;
@@ -17,7 +17,7 @@ import java.util.*;
  * Non blocking Server class
  */
 public class Server {
-    private Selector selector; //multiplexer
+    private ServerSocketChannel socketServer;
     private InetSocketAddress address;//address
     private final int variant;
     private boolean calculateEnable = true;
@@ -40,89 +40,112 @@ public class Server {
     }
 
     /**
-     * Function that running server
+     * Function of running the server
      */
     public void run() {
         try {
-            this.selector = Selector.open(); // init selector
-            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-            serverSocketChannel.bind(address);
-            serverSocketChannel.configureBlocking(false); // non blocking
-            serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT); // register selector and type of event
+            socketServer = ServerSocketChannel.open();
+            socketServer.configureBlocking(false);
+            socketServer.socket().bind(address);
 
-            ClientGx gx = new ClientGx();
-            ClientFx fx = new ClientFx();
-            gx.start();
-            fx.start();
-            clientThreads.add(gx);
-            clientThreads.add(fx);
             System.out.println("Server started!");
+            startClients(this.variant);
 
             while (calculateEnable) {
                 //blocking wait for events
-                this.selector.select();
-                Iterator keys = this.selector.selectedKeys().iterator();
-                while (keys.hasNext()) {
-                    SelectionKey key = (SelectionKey) keys.next();
-                    keys.remove();
-                    if (!key.isValid()) continue;
-                    if (key.isAcceptable()) accept(key);
-                    else if (key.isReadable()) read(key);
-                }
+                SocketChannel channel = socketServer.accept(); // getting channel
 
+                //server operations (writing and reading from socket)
+                handle(channel);
+
+                //checking connections
                 if (this.maxConnections <= 0) {
                     this.calculateEnable = false;
                 }
 
             }
-            serverSocketChannel.close();
+            socketServer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Function that accepting connections
+     * The function of working with clients
      *
-     * @param key
-     * @throws IOException
+     * @param variant
      */
-    private void accept(SelectionKey key) throws IOException {
-        ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
-        SocketChannel channel = serverSocketChannel.accept(); // getting channel
-        channel.configureBlocking(false);
-        channel.register(this.selector, SelectionKey.OP_WRITE);
+    private void startClients(int variant){
+        //connect and run our server-clients
+        if (variant == 1 || variant == 3 || variant==5){
+            ClientFx fx = new ClientFx();
+            ClientGx gx = new ClientGx();
+            fx.start();
+            gx.start();
+            clientThreads.add(gx);
+            clientThreads.add(fx);
 
+        }else{
+            ClientGx gx = new ClientGx();
+            ClientFx fx = new ClientFx();
+            gx.start();
+            fx.start();
+            clientThreads.add(gx);
+            clientThreads.add(fx);
+        }
+    }
+
+    /**
+     * Function of sending message to the client
+     *
+     * @param socket
+     */
+    private void sendMessage(SocketChannel socket){
+       try{
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
         String s = String.valueOf(this.variant);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
         byteBuffer.put(s.getBytes());
         byteBuffer.flip();
-        channel.write(byteBuffer);
-        channel.register(this.selector, SelectionKey.OP_READ);
+        socket.write(byteBuffer);
+        }catch (IOException e){
+           e.printStackTrace();
+       }
+    }
+
+    /**
+     * Function of working with the socket
+     *
+     * @param socket
+     */
+    private void handle(SocketChannel socket){
+        try {
+           sendMessage(socket);
+
+            read(socket);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Function that reading message from client
      *
-     * @param key
      * @throws IOException
      */
-    private void read(SelectionKey key) throws IOException {
-        SocketChannel channel = (SocketChannel) key.channel();
+    private void read(SocketChannel socket) throws IOException {
         ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-        int numRead = channel.read(byteBuffer);
+        int numRead = socket.read(byteBuffer);
         if (numRead == -1) {
-            channel.close();
-            key.cancel();
+            socket.close();
             return;
         }
-
+        //creating byte array for message
         byte[] data = new byte[numRead];
         System.arraycopy(byteBuffer.array(), 0, data, 0, numRead);
         String gotData = new String(data);
         System.out.println("Got:" + gotData);
         analyzeResult(gotData);
-        channel.register(this.selector, SelectionKey.OP_WRITE);
     }
 
     /**
@@ -147,6 +170,11 @@ public class Server {
 
     }
 
+    /**
+     * Getter for hashmap (my results)
+     *
+     * @return
+     */
     public HashMap<Integer, String> getResults() {
         return results;
     }
@@ -170,13 +198,14 @@ public class Server {
     /**
      * Function that closing server
      */
-    public void close() {
-        try {
-            this.selector.close();
+    public void close() throws IOException {
+        try{
             for (Thread thread : clientThreads) {
                 thread.stop();
             }
-        } catch (IOException e) {
+            socketServer.close();
+
+        }catch(IOException e){
             e.printStackTrace();
         }
     }

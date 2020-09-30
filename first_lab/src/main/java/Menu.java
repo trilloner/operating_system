@@ -3,9 +3,10 @@
  *
  * @author Bogdan Volokhonenko
  */
+import java.io.IOException;
 import java.util.Scanner;
 public class Menu {
-    public void menu(){
+    public void menu() throws IOException {
         while (true){
             int select;
             Scanner selector = new Scanner(System.in);
