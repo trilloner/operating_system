@@ -4,6 +4,8 @@
  * @author Bogdan Volokhonenko
  */
 
+import spos.lab1.demo.IntOps;
+
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -95,6 +97,9 @@ public class ClientFx extends Thread {
             int number = Integer.parseInt(result);
 
             int message = fx(number);
+            //testing SPOS library
+            //int message = IntOps.funcF(number);
+
             this.sendMessage(message);
 
 
