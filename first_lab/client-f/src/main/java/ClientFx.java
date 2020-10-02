@@ -7,6 +7,8 @@
 import spos.lab1.demo.IntOps;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
@@ -48,7 +50,7 @@ public class ClientFx extends Thread {
                 JFrame jf = new JFrame();
                 jf.setSize(500,200);
                 jf.addKeyListener(new ClientGx.KeyHandler());
-                jf.add(new JLabel("SOMETHING WENT WRONG. \n ERROR. PRESS ENTER", SwingUtilities.CENTER));
+                jf.add(new JLabel("SOMETHING WENT WRONG. \n ERROR. PRESS CTRL+C", SwingUtilities.CENTER));
                 jf.setVisible(true);
                 jf.setLocationRelativeTo(null);
                 while (true) {
@@ -137,12 +139,19 @@ public class ClientFx extends Thread {
 
         @Override
         public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                System.exit(1);
+            AWTKeyStroke ak = AWTKeyStroke.getAWTKeyStrokeForEvent(e);
+            if(ak.equals(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK)))
+            {
+                System.out.println("The program was closed by user: Ctrl+C");
+                System.exit(-1);
             }
         }
 
         @Override
         public void keyReleased(KeyEvent e) { }
+    }
+
+    public static void main(String[] args) {
+       new ClientFx().start();
     }
 }

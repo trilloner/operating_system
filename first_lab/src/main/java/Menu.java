@@ -4,6 +4,8 @@
  * @author Bogdan Volokhonenko
  */
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 public class Menu {
     public void menu() throws IOException {
@@ -27,6 +29,8 @@ public class Menu {
 
             Server mainServer =  new Server("localhost", 2020, select,2);
             mainServer.run();
+
+
             System.out.println( mainServer.getResults());
             System.out.println( "RESULT OF MULTIPLY: " +  mainServer.getMultiplication() + "\n\n");
             mainServer.close();

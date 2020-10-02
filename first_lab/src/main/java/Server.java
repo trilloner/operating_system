@@ -75,15 +75,15 @@ public class Server {
      *
      * @param variant
      */
-    private void startClients(int variant){
+    private void startClients(int variant) throws IOException {
         //connect and run our server-clients
         if (variant == 1 || variant == 3 || variant==5){
             ClientFx fx = new ClientFx();
             ClientGx gx = new ClientGx();
             fx.start();
             gx.start();
-            clientThreads.add(gx);
             clientThreads.add(fx);
+            clientThreads.add(gx);
 
         }else{
             ClientGx gx = new ClientGx();
