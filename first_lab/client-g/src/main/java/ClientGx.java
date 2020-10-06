@@ -3,7 +3,10 @@
  *
  * @author Bogdan Volokhonenko
  */
+
+import spos.lab1.demo.DoubleOps;
 import spos.lab1.demo.IntOps;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -17,7 +20,7 @@ import java.nio.channels.SocketChannel;
 /**
  * Client class
  */
-public class ClientGx extends Thread{
+public class ClientGx {
     private static final int port = 2020;
 
     private static final int BUFFER_SIZE = 1024;
@@ -79,7 +82,7 @@ public class ClientGx extends Thread{
     /**
      * An override method that starts and connects the client to the server
      */
-    @Override
+
     public void run() {
         try {
 
@@ -96,11 +99,11 @@ public class ClientGx extends Thread{
 
             int number = Integer.parseInt(result);
 
-            int message = fx(number);
+            //int message = fx(number);
             //testing SPOS library
-            //int message = IntOps.funcG(number);
-
-            this.sendMessage(message);
+            double message = DoubleOps.funcG(number);
+            int res = (int) message;
+            this.sendMessage(res);
 
 
         } catch (IOException | InterruptedException e) {
@@ -150,6 +153,6 @@ public class ClientGx extends Thread{
     }
 
     public static void main(String[] args) {
-        new ClientGx().start();
+        new ClientGx().run();
     }
 }

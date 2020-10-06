@@ -4,8 +4,6 @@
  * @author Bogdan Volokhonenko
  */
 
-import sun.rmi.runtime.Log;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -23,7 +21,7 @@ public class Server {
     private boolean calculateEnable = true;
     private int maxConnections;
     private final HashMap<Integer, String> results = new HashMap<>();
-    private ArrayList<Thread> clientThreads = new ArrayList<>();
+    private ArrayList<Process> clientProcesses = new ArrayList<>();
 
     /**
      * Constructor
@@ -49,23 +47,50 @@ public class Server {
             socketServer.socket().bind(address);
 
             System.out.println("Server started!");
+
+            //starting clients
             startClients(this.variant);
 
+
             while (calculateEnable) {
+
                 //blocking wait for events
                 SocketChannel channel = socketServer.accept(); // getting channel
+                if (channel != null) {
 
-                //server operations (writing and reading from socket)
-                handle(channel);
+                    //server operations (writing and reading from socket)
 
-                //checking connections
-                if (this.maxConnections <= 0) {
-                    this.calculateEnable = false;
+                    handle(channel);
+
+                    //checking connections
+                    if (this.maxConnections == 0) {
+                        this.calculateEnable = false;
+                    }
                 }
 
+
+
+
             }
-            socketServer.close();
-        } catch (IOException e) {
+             socketServer.close();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    /**
+     * The function of starting processes
+     *
+     */
+    private void startProcess(String s){
+        try{
+            ProcessBuilder builder = new ProcessBuilder("java", "-jar", "C:\\Users\\mamko\\Documents\\GitHub\\operating_system\\first_lab\\out\\artifacts\\client_" + s +"_jar\\client-" + s +".jar");
+
+            Process process = builder.start();
+            clientProcesses.add(process);
+        }catch (IOException e){
             e.printStackTrace();
         }
     }
@@ -73,25 +98,20 @@ public class Server {
     /**
      * The function of working with clients
      *
-     * @param variant
+     *
      */
-    private void startClients(int variant) throws IOException {
+    private void startClients(int variant) throws IOException, InterruptedException {
         //connect and run our server-clients
         if (variant == 1 || variant == 3 || variant==5){
-            ClientFx fx = new ClientFx();
-            ClientGx gx = new ClientGx();
-            fx.start();
-            gx.start();
-            clientThreads.add(fx);
-            clientThreads.add(gx);
+
+            startProcess("f");
+            startProcess("g");
 
         }else{
-            ClientGx gx = new ClientGx();
-            ClientFx fx = new ClientFx();
-            gx.start();
-            fx.start();
-            clientThreads.add(gx);
-            clientThreads.add(fx);
+
+           startProcess("g");
+           startProcess("f");
+
         }
     }
 
@@ -101,15 +121,15 @@ public class Server {
      * @param socket
      */
     private void sendMessage(SocketChannel socket){
-       try{
-        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
-        String s = String.valueOf(this.variant);
-        byteBuffer.put(s.getBytes());
-        byteBuffer.flip();
-        socket.write(byteBuffer);
+        try{
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024);
+            String s = String.valueOf(this.variant);
+            byteBuffer.put(s.getBytes());
+            byteBuffer.flip();
+            socket.write(byteBuffer);
         }catch (IOException e){
-           e.printStackTrace();
-       }
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -119,7 +139,7 @@ public class Server {
      */
     private void handle(SocketChannel socket){
         try {
-           sendMessage(socket);
+            sendMessage(socket);
 
             read(socket);
 
@@ -200,8 +220,8 @@ public class Server {
      */
     public void close() throws IOException {
         try{
-            for (Thread thread : clientThreads) {
-                thread.stop();
+            for (Process proc : clientProcesses) {
+                proc.destroy();
             }
             socketServer.close();
 

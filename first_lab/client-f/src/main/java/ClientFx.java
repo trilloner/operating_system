@@ -4,7 +4,7 @@
  * @author Bogdan Volokhonenko
  */
 
-import spos.lab1.demo.IntOps;
+import spos.lab1.demo.DoubleOps;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +19,7 @@ import java.nio.channels.SocketChannel;
 /**
  * Client class
  */
-public class ClientFx extends Thread {
+public class ClientFx {
 
     private static final int port = 2020;
 
@@ -82,7 +82,7 @@ public class ClientFx extends Thread {
     /**
      * An override method that starts and connects the client to the server
      */
-    @Override
+
     public void run() {
         try {
 
@@ -98,11 +98,13 @@ public class ClientFx extends Thread {
 
             int number = Integer.parseInt(result);
 
-            int message = fx(number);
+            //int message = fx(number);
             //testing SPOS library
-            //int message = IntOps.funcF(number);
-
-            this.sendMessage(message);
+            double message = DoubleOps.funcF(number);
+            int res = (int) message;
+            System.out.println(message);
+            //System.out.println(message);
+            this.sendMessage(res);
 
 
         } catch (IOException | InterruptedException e) {
@@ -152,6 +154,7 @@ public class ClientFx extends Thread {
     }
 
     public static void main(String[] args) {
-       new ClientFx().start();
+       new ClientFx().run();
+
     }
 }
