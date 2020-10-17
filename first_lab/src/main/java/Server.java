@@ -40,7 +40,7 @@ public class Server {
     /**
      * Function of running the server
      */
-    public void run() {
+    public void run() throws IOException {
         try {
             socketServer = ServerSocketChannel.open();
             socketServer.configureBlocking(false);
@@ -72,24 +72,23 @@ public class Server {
 
 
             }
-             socketServer.close();
+
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+          close();
         }
     }
-
-
-
+    
     /**
      * The function of starting processes
      *
      */
-    private void startProcess(String s){
+    private void startProcess(String s) throws InterruptedException{
         try{
-            ProcessBuilder builder = new ProcessBuilder("java", "-jar", "C:\\Users\\mamko\\Documents\\GitHub\\operating_system\\first_lab\\out\\artifacts\\client_" + s +"_jar\\client-" + s +".jar");
+            ProcessBuilder builder = new ProcessBuilder("java", "-jar", "C:\\Users\\mamko\\Documents\\GitHub\\operating_system\\first_lab\\out\\artifacts\\client_" + s +"_jar\\client-" + s +".jar", String.valueOf(this.variant));
 
             Process process = builder.start();
             clientProcesses.add(process);
+
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -102,17 +101,8 @@ public class Server {
      */
     private void startClients(int variant) throws IOException, InterruptedException {
         //connect and run our server-clients
-        if (variant == 1 || variant == 3 || variant==5){
-
-            startProcess("f");
-            startProcess("g");
-
-        }else{
-
-           startProcess("g");
-           startProcess("f");
-
-        }
+        startProcess("f");
+        startProcess("g");
     }
 
     /**
@@ -137,14 +127,14 @@ public class Server {
      *
      * @param socket
      */
-    private void handle(SocketChannel socket){
+    private void handle(SocketChannel socket) throws IOException {
         try {
             sendMessage(socket);
 
             read(socket);
 
         } catch (IOException e) {
-            e.printStackTrace();
+          this.close();
         }
     }
 
@@ -181,6 +171,7 @@ public class Server {
 
         if (value == 0) {
             this.calculateEnable = false;
+            System.out.println("Another client's calculations were canceled");
         }
 
         String name = args[1];
@@ -218,7 +209,7 @@ public class Server {
     /**
      * Function that closing server
      */
-    public void close() throws IOException {
+    public void close()  {
         try{
             for (Process proc : clientProcesses) {
                 proc.destroy();

@@ -27,6 +27,8 @@ public class ClientGx {
 
     private static SocketChannel socket;
 
+    private int result;
+
     /**
      * Function f(x) that does complex calculations
      *
@@ -50,7 +52,7 @@ public class ClientGx {
                 JFrame jf = new JFrame();
                 jf.setSize(500,200);
                 jf.addKeyListener(new KeyHandler());
-                jf.add(new JLabel("SOMETHING WENT WRONG. \n ERROR. PRESS CTRL+C", SwingUtilities.CENTER));
+                jf.add(new JLabel("Client stopped responding \n Press to exit: CTRL+C", SwingUtilities.CENTER));
                 jf.setVisible(true);
                 jf.setLocationRelativeTo(null);
                 while (true) {
@@ -69,8 +71,9 @@ public class ClientGx {
     /**
      * Constructor
      */
-    public ClientGx() {
+    public ClientGx(int number) {
         try {
+            this.result = number;
             InetSocketAddress address = new InetSocketAddress("localhost", port);
             socket = SocketChannel.open(address);
 
@@ -97,16 +100,10 @@ public class ClientGx {
 
             buffer.clear();
 
-            int number = Integer.parseInt(result);
-
-            //int message = fx(number);
-            //testing SPOS library
-            double message = DoubleOps.funcG(number);
-            int res = (int) message;
-            this.sendMessage(res);
+            this.sendMessage(this.result);
 
 
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             System.out.println("No connect");
             e.printStackTrace();
         }
@@ -144,7 +141,6 @@ public class ClientGx {
             AWTKeyStroke ak = AWTKeyStroke.getAWTKeyStrokeForEvent(e);
             if(ak.equals(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK)))
             {
-                System.out.println("The program was closed by user: Ctrl+C");
                 System.exit(-1);
             }
         }
@@ -152,7 +148,10 @@ public class ClientGx {
         public void keyReleased(KeyEvent e) { }
     }
 
-    public static void main(String[] args) {
-        new ClientGx().run();
+    public static void main(String[] args) throws InterruptedException {
+        int number =  Integer.parseInt(args[0]);
+        int message = IntOps.funcG(number);
+        //int message = fx(number);
+        new ClientGx(message).run();
     }
 }

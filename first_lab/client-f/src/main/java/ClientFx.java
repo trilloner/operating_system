@@ -5,6 +5,7 @@
  */
 
 import spos.lab1.demo.DoubleOps;
+import spos.lab1.demo.IntOps;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +27,8 @@ public class ClientFx {
     private static final int BUFFER_SIZE = 1024;
 
     private static SocketChannel socket;
+
+    private int result;
     /**
      * Function f(x) that does complex calculations
      *
@@ -34,7 +37,7 @@ public class ClientFx {
      * @throws InterruptedException
      */
     public static int fx(int variant) throws InterruptedException {
-        Thread.sleep(5);
+        Thread.sleep(500);
         switch (variant) {
             case 1:
                 return (int) (10);
@@ -50,7 +53,7 @@ public class ClientFx {
                 JFrame jf = new JFrame();
                 jf.setSize(500,200);
                 jf.addKeyListener(new ClientGx.KeyHandler());
-                jf.add(new JLabel("SOMETHING WENT WRONG. \n ERROR. PRESS CTRL+C", SwingUtilities.CENTER));
+                jf.add(new JLabel("Client stopped responding \n Press to exit: CTRL+C", SwingUtilities.CENTER));
                 jf.setVisible(true);
                 jf.setLocationRelativeTo(null);
                 while (true) {
@@ -69,8 +72,9 @@ public class ClientFx {
     /**
      * Constructor
      */
-    public ClientFx() {
+    public ClientFx(int variant) {
         try {
+            this.result = variant;
             InetSocketAddress address = new InetSocketAddress("localhost", port);
             socket = SocketChannel.open(address);
 
@@ -96,18 +100,10 @@ public class ClientFx {
             String result = new String(bytes, "UTF-8");
             buffer.clear();
 
-            int number = Integer.parseInt(result);
-
-            //int message = fx(number);
-            //testing SPOS library
-            double message = DoubleOps.funcF(number);
-            int res = (int) message;
-            System.out.println(message);
-            //System.out.println(message);
-            this.sendMessage(res);
+            this.sendMessage(this.result);
 
 
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException  e) {
             System.out.println("No connect");
             e.printStackTrace();
         }
@@ -144,7 +140,6 @@ public class ClientFx {
             AWTKeyStroke ak = AWTKeyStroke.getAWTKeyStrokeForEvent(e);
             if(ak.equals(AWTKeyStroke.getAWTKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK)))
             {
-                System.out.println("The program was closed by user: Ctrl+C");
                 System.exit(-1);
             }
         }
@@ -153,8 +148,11 @@ public class ClientFx {
         public void keyReleased(KeyEvent e) { }
     }
 
-    public static void main(String[] args) {
-       new ClientFx().run();
+    public static void main(String[] args) throws InterruptedException {
+        int number =  Integer.parseInt(args[0]);
+        int message = IntOps.funcF(number);
+        //int message = fx(number);
+        new ClientFx(message).run();
 
     }
 }
