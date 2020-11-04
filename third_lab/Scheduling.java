@@ -20,7 +20,7 @@ public class Scheduling {
   private static int meanDev = 1000;
   private static int standardDev = 100;
   private static int runtime = 1000;
-  private static Vector processVector = new Vector();
+  private static Vector<sProcess> processVector = new Vector();
   private static Results result = new Results("null","null",0);
   private static String resultsFile = "Summary-Results";
 
@@ -89,12 +89,9 @@ public class Scheduling {
 
   public static void main(String[] args) {
     int i = 0;
+    String filename = "scheduling.conf";
 
-    if (args.length != 1) {
-      System.out.println("Usage: 'java Scheduling <INIT FILE>'");
-      System.exit(-1);
-    }
-    File f = new File(args[0]);
+    File f = new File(filename);
     if (!(f.exists())) {
       System.out.println("Scheduling: error, file '" + f.getName() + "' does not exist.");
       System.exit(-1);
@@ -104,7 +101,7 @@ public class Scheduling {
       System.exit(-1);
     }
     System.out.println("Working...");
-    Init(args[0]);
+    Init(filename);
     if (processVector.size() < processnum) {
       i = 0;
       while (processVector.size() < processnum) {       
