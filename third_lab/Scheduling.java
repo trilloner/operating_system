@@ -31,10 +31,12 @@ public class Scheduling {
     int cputime = 0;
     int ioblocking = 0;
     double X = 0.0;
+    int priority ;
 
     try {   
       //BufferedReader in = new BufferedReader(new FileReader(f));
       DataInputStream in = new DataInputStream(new FileInputStream(f));
+      int i = 0;
       while ((line = in.readLine()) != null) {
         if (line.startsWith("numprocess")) {
           StringTokenizer st = new StringTokenizer(line);
@@ -61,7 +63,10 @@ public class Scheduling {
           }
           X = X * standardDev;
           cputime = (int) X + meanDev;
-          processVector.addElement(new sProcess(cputime, ioblocking, 0, 0, 0));          
+          priority = (int) (Math.random() * 9) +1;
+          System.out.println(priority);
+          processVector.addElement(new sProcess(i, cputime, ioblocking, 0, 0, 0 , priority));
+          i++;
         }
         if (line.startsWith("runtime")) {
           StringTokenizer st = new StringTokenizer(line);
@@ -111,7 +116,9 @@ public class Scheduling {
           }
           X = X * standardDev;
         int cputime = (int) X + meanDev;
-        processVector.addElement(new sProcess(cputime,i*100,0,0,0));          
+        int priority = (int) (Math.random() * 9) +1;
+        System.out.println(priority);
+        processVector.addElement(new sProcess(i ,cputime,i*100,0,0,0, priority));
         i++;
       }
     }
@@ -127,7 +134,7 @@ public class Scheduling {
       out.println("Process #\tCPU Time\tIO Blocking\tCPU Completed\tCPU Blocked");
       for (i = 0; i < processVector.size(); i++) {
         sProcess process = (sProcess) processVector.elementAt(i);
-        out.print(Integer.toString(i));
+        out.print(Integer.toString(process.id));
         if (i < 100) { out.print("\t\t"); } else { out.print("\t"); }
         out.print(Integer.toString(process.cputime));
         if (process.cputime < 100) { out.print(" (ms)\t\t"); } else { out.print(" (ms)\t"); }
