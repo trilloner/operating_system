@@ -17,6 +17,7 @@ public class SchedulingAlgorithm {
     int size = processVector.size();
     int completed = 0;
     String resultsFile = "Summary-Processes";
+    Comparator comparator = new ImprovedProcessPriority();
 
     result.schedulingType = "Batch (Nonpreemptive)";
     result.schedulingName = "Shorted job first";
@@ -26,6 +27,7 @@ public class SchedulingAlgorithm {
       PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
 
       //sort(processVector);
+      processVector.sort(comparator);
       sProcess process = processVector.elementAt(currentProcess);
       out.println("Process: " +process.id + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + " " + process.cpudone + " "  + ")");
       while (comptime < runtime) {
