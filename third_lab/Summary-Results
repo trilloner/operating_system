@@ -1,13 +1,12 @@
 Scheduling Type: Batch (Nonpreemptive)
 Scheduling Name: Shorted job first
-Simulation Run Time: 9408
+Simulation Run Time: 8784
 Mean: 1100
 Standard Deviation: 510
 Process #	CPU Time	IO Blocking	CPU Completed	CPU Blocked
-3		1344 (ms)	50 (ms)		1344 (ms)	26 times
-2		1344 (ms)	30 (ms)		1344 (ms)	44 times
-6		1344 (ms)	80 (ms)		1344 (ms)	16 times
-4		1344 (ms)	150 (ms)	1344 (ms)	8 times
-0		1344 (ms)	100 (ms)	1344 (ms)	13 times
-5		1344 (ms)	200 (ms)	1344 (ms)	6 times
-1		1344 (ms)	500 (ms)	1344 (ms)	2 times
+0		726 (ms)	10000 (ms)	726 (ms)	0 times
+1		1504 (ms)	10000 (ms)	1504 (ms)	0 times
+2		1504 (ms)	10000 (ms)	1504 (ms)	0 times
+3		1504 (ms)	10000 (ms)	1504 (ms)	0 times
+4		1773 (ms)	10000 (ms)	1773 (ms)	0 times
+5		1773 (ms)	10000 (ms)	1773 (ms)	0 times

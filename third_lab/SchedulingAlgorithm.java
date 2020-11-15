@@ -26,8 +26,8 @@ public class SchedulingAlgorithm {
       //OutputStream out = new FileOutputStream(resultsFile);
       PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
 
-      //sort(processVector);
-      processVector.sort(comparator);
+      sort(processVector);
+//      processVector.sort(comparator);
       sProcess process = processVector.elementAt(currentProcess);
       out.println("Process: " +process.id + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + " " + process.cpudone + " "  + ")");
       while (comptime < runtime) {
@@ -93,7 +93,7 @@ public class SchedulingAlgorithm {
       public int compare(sProcess o1, sProcess o2) {
         sProcess pr1 = (sProcess) o1;
         sProcess pr2 = (sProcess) o2;
-        return pr1.ioblocking - pr2.ioblocking;
+        return pr1.cputime - pr2.cputime;
       }
     });
   }

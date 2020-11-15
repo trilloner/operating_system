@@ -6,7 +6,7 @@ public class ImprovedProcessPriority implements Comparator {
         sProcess pr1 = (sProcess) o1;
         sProcess pr2 = (sProcess) o2;
 
-        if (pr1.precendence == pr2.precendence && pr1.ioblocking == pr2.ioblocking)
+        if (pr1.precendence == pr2.precendence && pr1.ioblocking == pr2.ioblocking && pr1.cputime == pr2.cputime)
             return 0;
         float priority1 = (float) pr1.precendence / pr1.ioblocking;
         float priority2 = (float) pr2.precendence / pr2.ioblocking;
