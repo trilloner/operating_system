@@ -62,10 +62,11 @@ public class Scheduling {
             X = Common.R1();
           }
           X = X * standardDev;
-          cputime = (int) X + meanDev;
+          //cputime = (int) X + meanDev;
+          cputime = (int) (Math.random() * standardDev) + meanDev;
           priority = (int) (Math.random() * 9) +1;
-          System.out.println(priority);
-          processVector.addElement(new sProcess(i, cputime, ioblocking, 0, 0, 0 , priority));
+
+          processVector.addElement(new sProcess(i, cputime, ioblocking, 0, 0, 0 , 0));
           i++;
         }
         if (line.startsWith("runtime")) {
@@ -131,7 +132,7 @@ public class Scheduling {
       out.println("Simulation Run Time: " + result.compuTime);
       out.println("Mean: " + meanDev);
       out.println("Standard Deviation: " + standardDev);
-      out.println("Process #\tCPU Time\tIO Blocking\tCPU Completed\tCPU Blocked");
+      out.println("Process #\tCPU Time\tIO Blocking\tCPU Completed\tCPU Blocked\tPriority");
       for (i = 0; i < processVector.size(); i++) {
         sProcess process = (sProcess) processVector.elementAt(i);
         out.print(Integer.toString(process.id));
@@ -142,7 +143,9 @@ public class Scheduling {
         if (process.ioblocking < 100) { out.print(" (ms)\t\t"); } else { out.print(" (ms)\t"); }
         out.print(Integer.toString(process.cpudone));
         if (process.cpudone < 100) { out.print(" (ms)\t\t"); } else { out.print(" (ms)\t"); }
-        out.println(process.numblocked + " times");
+        out.println(process.numblocked + " times" + "\t\t" + process.precendence + "");
+
+
       }
       out.close();
     } catch (IOException e) { /* Handle exceptions */ }
