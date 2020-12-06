@@ -1,9 +1,10 @@
 READ 4 ... okay
-READ 13 ... okay
+WRITE 4 ... okay
 WRITE cc32 ... okay
 READ 4000 ... okay
 READ 4000 ... okay
 WRITE 6001 ... okay
 WRITE abaf5 ... page fault
+READ 9c40 ... page fault
 READ 927c0 ... page fault
 READ 61a80 ... okay
