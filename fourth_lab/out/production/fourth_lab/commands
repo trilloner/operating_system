@@ -1,0 +1,19 @@
+// Enter READ/WRITE commands into this file
+// READ <OPTIONAL number type: bin/hex/oct> <virtual memory address or random>
+// WRITE <OPTIONAL number type: bin/hex/oct> <virtual memory address or random>
+READ bin 100
+WRITE bin 100
+
+WRITE hex CC32
+
+READ bin 100000000000000
+READ bin 100000000000000
+WRITE bin 110000000000001
+WRITE hex abaf5
+
+READ 40000
+READ 600000
+READ 400000
+//16 в 10ричная система - это адрес.
+
+
